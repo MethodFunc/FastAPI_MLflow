@@ -64,32 +64,7 @@ def rename_gen(generator_name):
                         'DB12': 'DB_HJ12',
                         'DB13': 'DB_HJ13',
                         'DB14': 'DB_HJ14',
-                        'DB15': 'DB_HJ15',
-                        'GN02': 'GN_US01',
-                        'GS07': 'GS_HJ01',
-                        'GS08': 'GS_HJ02',
-                        'GS09': 'GS_HJ03',
-                        'GS10': 'GS_HJ04',
-                        'GS11': 'GS_HJ05',
-                        'GS12': 'GS_HJ06',
-                        'GS13': 'GS_HJ07',
-                        'GS01': 'GS_HS01',
-                        'GS02': 'GS_US01',
-                        'GS03': 'GS_HS03',
-                        'GS04': 'GS_US02',
-                        'GS05': 'GS_US03',
-                        'HW17': 'HW_DS01',
-                        'HW16': 'HW_HD01',
-                        'HW05': 'HW_HJ01',
-                        'HW04': 'HW_US01',
-                        'HW06': 'HW_VT01',
-                        'HW10': 'HW_VT04',
-                        'HW11': 'HW_VT05',
-                        'HW13': 'HW_VT07',
-                        'HW14': 'HW_VT08',
-                        'HW15': 'HW_VT09',
-                        'SC01': 'SC_VT01',
-                        'SC02': 'SC_VT02'}
+                        'DB15': 'DB_HJ15'}
 
     if generator_name.islower:
         generator = generator_name.upper()
