@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta content="" name="description">
+    <meta content="" name="author">
+
+    <title>Dashboard with A2M_Algoteam</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{{ url_for('static', path='/vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet"
+          type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <!--    <link href="css/sb-admin-2.min.css" rel="stylesheet">-->
+    <link href="{{url_for('static', path='/css/sb-admin-2.min.css')}}" rel="stylesheet">
+    <link href='https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.4/dist/css/datepicker.min.css' rel='stylesheet'>
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+
+</head>
+
+<body id="page-top">
+
+<!-- Content Wrapper -->
+<div class="d-flex flex-column" id="content-wrapper">
+
+    <!-- Main Content -->
+    <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+            <!-- Sidebar Toggle (Topbar) -->
+            <button class="btn btn-link d-md-none rounded-circle mr-3" id="sidebarToggleTop">
+                <i class="fa fa-bars"></i>
+            </button>
+
+            <!-- Topbar Search -->
+            <form
+                    class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                <div class="input-group">
+                    <input aria-describedby="basic-addon2" aria-label="Search" class="form-control bg-light border-0 small"
+                           placeholder="Search for..." type="text">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-search fa-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">API Information</h1>
+            </div>
+
+            <!-- Content Row -->
+            <div class="row">
+
+                <!-- API Server status Card Example -->
+                <div class="col-xl-6 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-6">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        API STATUS
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ status }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    {% if status == 'Active' %}
+                                    <i ani-type="shake" class="fas fa-carrot fa-2x" style='color:blue'></i>
+                                    {% else %}
+                                    <i ani-type="shake" class="fas fa-carrot fa-2x" style='color:red'></i>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Earnings (Annual) Card Example -->
+                <div class="col-xl-6 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        MLFLOW STATUS
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ mlflow }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    {% if mlflow == 'Active' %}
+                                    <i ani-type="shake" class="fas fa-carrot fa-2x" style='color:green'></i>
+                                    {% else %}
+                                    <i ani-type="shake" class="fas fa-carrot fa-2x" style='color:red'></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Row -->
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Chart</h1>
+                </div>
+                <!--                  DateTime Picker-->
+                <div class="row">
+                    <form method="post">
+                        <div class="input-group mb-4">
+                            <i class="bi bi-calendar-date input-group-text"></i>
+                            <select class="form-select" aria-label="Default select example" name="time_">
+                                <option value="default">원본</option>
+                                <option value="minute">1분 단위</option>
+                                <option value="hour">1시간 단위</option>
+                            </select>
+                            <select class="form-select" aria-label="Default select example" name="gen">
+                                    <option value="DB_HJ01">DB_HJ01</option>
+                                    <option value="DB_HJ02">DB_HJ02</option>
+                                    <option value="DB_HJ03">DB_HJ03</option>
+                                    <option value="DB_HJ04">DB_HJ04</option>
+                                    <option value="DB_HJ05">DB_HJ05</option>
+                                    <option value="DB_HJ06">DB_HJ06</option>
+                                    <option value="DB_HJ07">DB_HJ07</option>
+                                    <option value="DB_HJ08">DB_HJ08</option>
+                                    <option value="DB_HJ09">DB_HJ09</option>
+                                    <option value="DB_HJ10">DB_HJ10</option>
+                                    <option value="DB_HJ11">DB_HJ11</option>
+                                    <option value="DB_HJ12">DB_HJ12</option>
+                                    <option value="DB_HJ13">DB_HJ13</option>
+                                    <option value="DB_HJ14">DB_HJ14</option>
+                                    <option value="DB_HJ15">DB_HJ15</option>
+                                    <option value="GN_US01">GN_US01</option>
+                                    <option value="GS_HJ01">GS_HJ01</option>
+                                    <option value="GS_HJ02">GS_HJ02</option>
+                                    <option value="GS_HJ03">GS_HJ03</option>
+                                    <option value="GS_HJ04">GS_HJ04</option>
+                                    <option value="GS_HJ05">GS_HJ05</option>
+                                    <option value="GS_HJ06">GS_HJ06</option>
+                                    <option value="GS_HJ07">GS_HJ07</option>
+                                    <option value="GS_HS01">GS_HS01</option>
+                                    <option value="GS_HS02">GS_HS02</option>
+                                    <option value="GS_HS03">GS_HS03</option>
+                                    <option value="GS_US01">GS_US01</option>
+                                    <option value="GS_US02">GS_US02</option>
+                                    <option value="GS_US03">GS_US03</option>
+                                    <option value="HW_DS01">HW_DS01</option>
+                                    <option value="HW_HD01">HW_HD01</option>
+                                    <option value="HW_HJ01">HW_HJ01</option>
+                                    <option value="HW_US01">HW_US01</option>
+                                    <option value="HW_VT01">HW_VT01</option>
+                                    <option value="HW_VT04">HW_VT04</option>
+                                    <option value="HW_VT05">HW_VT05</option>
+                                    <option value="hw_vt07">HW_VT07</option>
+                                    <option value="HW_VT08">HW_VT08</option>
+                                    <option value="HW_VT09">HW_VT09</option>
+                                    <option value="SC_VT01">SC_VT01</option>
+                                    <option value="SC_VT02">SC_VT02</option>
+                                </select>
+<!--                            <input name="gen" placeholder="generator name" type="text"/>-->
+                            <input aria-label="Date input 3 (using aria-label)" class="datepicker_input form-control" equired id="datepicker2"
+                                   name="start" placeholder="시작 일" readonly
+                                   type="text" value="2022-08-01">
+                            <input aria-label="Date input 3 (using aria-label)" class="datepicker_input form-control" id="datepicker3" name="end"
+                                   placeholder="종료 일" readonly required
+                                   type="text" value="2022-08-02">
+                            <!--            <input type="text" name="start" id="datepicker1" placeholder="start date" readonly/>-->
+                            <!--            <input type="text" name="end" id="datepicker2" placeholder="end date" readonly/>-->
+                            <input type="submit" value="조회">
+                            </i>
+                    </form>
+                </div>
+
+                <div class="row">
+
+                    <!-- Area Chart -->
+                    <div class="col-xl-12 col-lg-4, col-md-8">
+                        <div class="card shadow mb-12">
+                            <!-- Card Header - Dropdown -->
+                            <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                                <div class="dropdown no-arrow">
+                                    <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle" data-toggle="dropdown"
+                                       href="#" id="dropdownMenuLink" role="button">
+                                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                    </a>
+                                    <div aria-labelledby="dropdownMenuLink"
+                                         class="dropdown-menu dropdown-menu-right shadow animated--fade-in">
+                                        <div class="dropdown-header">Dropdown Header:</div>
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Card Body -->
+                            <!--                            <div class="card-body">-->
+                            <!--                                <div class="chart-area">-->
+                            <div , class="chart" id="SampleGraph">
+                                <script>
+                                    var graphs = {{ result | safe }}
+                                    Plotly.plot('SampleGraph', graphs, {});
+                                </script>
+                                <!--                                    </div>-->
+                                <!--                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <!-- End of Main Content -->
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span>Copyright &copy; Your Website 2021</span>
+                        </div>
+                    </div>
+                </footer>
+                <!-- End of Footer -->
+
+            </div>
+            <!-- End of Content Wrapper -->
+
+        </div>
+        <!-- End of Page Wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+
+        <!-- Bootstrap core JavaScript-->
+
+        <!--    <script src="vendor/jquery/jquery.min.js"></script>-->
+        <!--    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>-->
+        <!--        <script src="{{url_for('static', path='/vendor/jquery/jquery.min.js')}}"></script>-->
+        <!--        <script src="{{url_for('static', path='/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>-->
+
+        <!-- Core plugin JavaScript-->
+        <!--    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>-->
+        <script src="{{url_for('static', path='/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
+
+
+        <!-- Custom scripts for all pages-->
+        <!--    <script src="js/sb-admin-2.min.js"></script>-->
+        <script src="{{url_for('static', path='/js/sb-admin-2.min.js')}}"></script>
+
+
+        <!-- Page level plugins -->
+        <!--    <script src="vendor/chart.js/Chart.min.js"></script>-->
+        <script src="{{url_for('static', path='/vendor/chart.js/Chart.min.js')}}"></script>
+
+
+        <!-- Page level custom scripts -->
+        <script src="{{url_for('static', path='/js/demo/chart-area-demo.js')}}"></script>
+        <script src="{{url_for('static', path='/js/demo/chart-pie-demo.js')}}"></script>
+
+        <!-- DataPicker -->
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+        <script crossorigin="anonymous"
+                integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+                src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src='https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.4/dist/js/datepicker-full.min.js'></script>
+        <script>
+            /* Bootstrap 5 JS included */
+            /* vanillajs-datepicker 1.1.4 JS included */
+
+            const getDatePickerTitle = elem => {
+                // From the label or the aria-label
+                const label = elem.nextElementSibling;
+                let titleText = '';
+                if (label && label.tagName === 'LABEL') {
+                    titleText = label.textContent;
+                } else {
+                    titleText = elem.getAttribute('aria-label') || '';
+                }
+                return titleText;
+            }
+
+            const elems = document.querySelectorAll('.datepicker_input');
+            for (const elem of elems) {
+                const datepicker = new Datepicker(elem, {
+                    'format': 'yyyy-mm-dd', // UK format
+                    title: getDatePickerTitle(elem)
+                });
+            }
+        </script>
+
+
+
+</body>
+
+</html>

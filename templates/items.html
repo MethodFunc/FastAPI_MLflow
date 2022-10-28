@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Form</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.4/dist/css/datepicker.min.css'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+
+</head>
+<body>
+<form method="post">
+    <div class="input-group mb-4">
+        <i class="bi bi-calendar-date input-group-text"></i>
+            <input type="text" name="gen"  placeholder="generator name"/>
+            <input type="text" name="start" id="datepicker2" class="datepicker_input form-control" placeholder="start date"equired aria-label="Date input 3 (using aria-label)" readonly>
+            <input type="text" name="end" id="datepicker3" class="datepicker_input form-control" placeholder="end date" required aria-label="Date input 3 (using aria-label)" readonly>
+            <input type="submit">
+        </i>
+    </div>
+</form>
+
+<h2>Input group only</h2>
+
+<div class="input-group mb-4">
+  <i class="bi bi-calendar-date input-group-text"></i>
+  <input type="text" class="datepicker_input form-control" placeholder="Date input 3 placeholder" required aria-label="Date input 3 (using aria-label)">
+</div>
+
+
+<h2>Floating label &amp; input group</h2>
+
+<div class="form-floating input-group mb-4">
+  <i class="bi bi-calendar-date input-group-text"></i>
+  <input type="text" id="datepicker" class="datepicker_input form-control" placeholder="DD/MM/YYYY" required>
+  <label for="datepicker">Date input label 2</label>
+</div>
+
+<div class="chart", id="SampleGraph">
+    <script>
+        var graphs = {{result | safe }};
+        Plotly.plot('SampleGraph', graphs, {});
+
+    </script>
+</div>
+<!--<p>{{ result }}</p>-->
+
+
+<!-- Bootstrap 5 JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+
+<!-- Vanilla Datepicker JS -->
+<script src='https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.4/dist/js/datepicker-full.min.js'></script>
+
+<script>
+/* Bootstrap 5 JS included */
+/* vanillajs-datepicker 1.1.4 JS included */
+
+const getDatePickerTitle = elem => {
+  // From the label or the aria-label
+  const label = elem.nextElementSibling;
+  let titleText = '';
+  if (label && label.tagName === 'LABEL') {
+    titleText = label.textContent;
+  } else {
+    titleText = elem.getAttribute('aria-label') || '';
+  }
+  return titleText;
+}
+
+const elems = document.querySelectorAll('.datepicker_input');
+for (const elem of elems) {
+  const datepicker = new Datepicker(elem, {
+    'format': 'yyyy년 mm월 dd일', // UK format
+    title: getDatePickerTitle(elem)
+  });
+}
+</script>
+
+</body>
+</html>
