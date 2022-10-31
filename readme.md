@@ -23,7 +23,7 @@ api서버 접속 불가 시 당근이 붉게 변합니다.
 ### SwaggerUI
 ![](readme_img/swagger_ui.png)
 
-### Redocs
+### API Sample
 ![](readme_img/redoc.png)
 
 
