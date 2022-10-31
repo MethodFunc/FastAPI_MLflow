@@ -1,6 +1,6 @@
-from sqlalchemy import Column,  Integer,  Float, DateTime
+from sqlalchemy import Column, Integer, Float, DateTime
 
-from .database import Base, ScadaBase
+from .database import DataBase, ScadaBase
 
 
 def create_models(tablename):
@@ -21,3 +21,19 @@ def create_models(tablename):
             self.active_power = active_power
 
     return Scada
+
+
+def create_forcast(tablename):
+    class FST(DataBase):
+        __tablename__ = tablename
+        __table_args__ = {'extend_existing': True}
+
+        id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+        record_date = Column(DateTime, unique=True)
+        forecast = Column(Float)
+
+        def __init__(self, record_date, forecast):
+            self.record_date = record_date
+            self.forecast = forecast
+
+    return FST

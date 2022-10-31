@@ -2,17 +2,25 @@ import pandas as pd
 import sqlalchemy.exc
 
 from schemas.json_schema import JsonQuery
-from .rmodules import prediction, rename_gen, scada_insert
+from .rmodules import prediction, rename_gen, scada_insert, forecast_insert
 from mlflows.loadmodel import load_model
 from fastapi import APIRouter, File, UploadFile, Depends
 from fastapi.encoders import jsonable_encoder
-from postgres.database import ScadaSessionLocal
+from postgres.database import ScadaSessionLocal, scada_engine, DataSessionLocal, data_engine
 
 from sqlalchemy.orm import Session
 
 
-def get_scada():
+def get_scada():  # Scada Data
     db = ScadaSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def get_forecast():  # Forecast
+    db = DataSessionLocal()
     try:
         yield db
     finally:
@@ -42,12 +50,13 @@ async def predict_file(generator: str, file: UploadFile = File(...)):
 
 
 @router.post('/json_query')
-async def json_query(generator: str, query: JsonQuery, db: Session = Depends(get_scada)):
+async def json_query(generator: str, query: JsonQuery, db: Session = Depends(get_scada),
+                     db2: Session = Depends(get_forecast)):
     generator = rename_gen(generator)
-    print(generator)
 
     data = jsonable_encoder(query)
     dataframe = pd.DataFrame(data)
+    print('asdf')
     try:
         scada_insert(dataframe, generator, db)
     except sqlalchemy.exc.IntegrityError:
@@ -55,5 +64,12 @@ async def json_query(generator: str, query: JsonQuery, db: Session = Depends(get
 
     model = load_model(generator)
     predict = prediction(model, dataframe)
+
+    try:
+        forecast_insert(predict, generator, db2)
+
+    except sqlalchemy.exc.IntegrityError:
+
+        print(f'Data is Exsits')
 
     return predict

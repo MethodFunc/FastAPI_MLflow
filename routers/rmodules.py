@@ -1,8 +1,8 @@
 from datetime import datetime
-
+import pytz
 import pandas as pd
-from postgres.crud import insert_item
-from postgres.schemas import Scada
+from postgres.crud import insert_item, insert_forecast
+from postgres.schemas import Scada, Forecast
 from sqlalchemy.orm import Session
 
 
@@ -33,20 +33,39 @@ def prediction(model, dataframe) -> list:
     indices = predict['ds'][24:]
     predict = predict[cols].sum()
 
-    output = {index: value for index, value in zip(indices, predict)}
+    # output = {index: value for index, value in zip(indices, predict)}
+    output = list()
+    timezone = pytz.timezone('asia/seoul')
+    for indices, values in zip(indices, predict):
+        dt = datetime.strptime(str(indices), '%Y-%m-%d %H:%M:%S')
+        local_dt = timezone.localize(dt, is_dst=None)
+        utc_dt = local_dt.astimezone(pytz.utc)
+
+        output_dict = {'datetime': utc_dt, 'genPower': values}
+        output.append(output_dict)
 
     return output
 
 
 # Scada Data Table Insert
 def scada_insert(dataframe, gen_name, db: Session):
-    print('insert start')
+    print('Scada insert start')
     for _, values in dataframe.iterrows():
         date = datetime.strptime(values['ds'], '%Y.%m.%d %H:%M')
         item = Scada(recode_date=date, wind_speed=values['WS'], wind_direction=values['WD'],
                      active_power=values['y'])
 
         insert_item(db, gen_name, schema=item)
+
+
+def forecast_insert(dataframe, gen_name, db: Session):
+    print('Forecast insert start!')
+    dataframe_ = pd.DataFrame(dataframe)
+    print(dataframe_)
+    for _, values in dataframe_.iterrows():
+        item = Forecast(recode_date=values['datetime'], forecast=values['genPower'])
+
+        insert_forecast(db, gen_name, schema=item)
 
 
 def rename_gen(generator_name):

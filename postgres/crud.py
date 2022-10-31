@@ -17,6 +17,17 @@ def insert_item(db: Session, name: str, schema: schemas.Scada):
     return table_item
 
 
+def insert_forecast(db: Session, name: str, schema: schemas.Forecast):
+    tables = models.create_forcast(name)
+    database.DataBase.metadata.create_all(bind=database.data_engine)
+    table_item = tables(record_date=schema.recode_date, forecast=schema.forecast)
+    db.add(table_item)
+    db.commit()
+    db.refresh(table_item)
+
+    return table_item
+
+
 def get_data(db: Session, time_: str, generator_name: str, start_date: str, end_date: str):
     # sql = f"-- select ds, ap from jeju.{generator_name} where ds>='{start_date}' AND ds<'{end_date}'"
     sql = f"select date_trunc('{time_}', ds) as ds, avg(ap) as ap from jeju.{generator_name} where ds>='{start_date}' and ds<='{end_date}' group by 1"

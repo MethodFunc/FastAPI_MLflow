@@ -11,3 +11,11 @@ class Scada(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class Forecast(BaseModel):
+    recode_date: Optional[datetime] = None
+    forecast: float
+
+    class Config:
+        orm_mode = True
