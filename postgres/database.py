@@ -6,7 +6,6 @@ from sqlalchemy.orm import sessionmaker
 SQLALCHEMY_DATABASE_URL1 = "postgresql+psycopg2://dev:dev1234@localhost:5432/data"
 SQLALCHEMY_DATABASE_URL2 = "postgresql+psycopg2://dev:dev1234@localhost:5432/test"
 
-
 data_engine = create_engine(
     SQLALCHEMY_DATABASE_URL1
 )
@@ -20,4 +19,3 @@ ScadaSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=scada_e
 
 DataBase = declarative_base(bind=data_engine)
 ScadaBase = declarative_base(bind=scada_engine)
-

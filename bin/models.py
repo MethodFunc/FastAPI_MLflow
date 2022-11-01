@@ -1,6 +1,7 @@
-from neuralprophet import NeuralProphet
-from pathlib import Path
 import pickle
+from pathlib import Path
+
+from neuralprophet import NeuralProphet
 
 
 class NeuralModel(NeuralProphet):

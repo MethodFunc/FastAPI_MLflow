@@ -1,12 +1,13 @@
 import pandas as pd
-
+import plotly.express as px
 from fastapi import APIRouter, Depends
 from fastapi.encoders import jsonable_encoder
-from schemas.json_schema import JsonQuery
-from .rmodules import scada_insert, rename_gen
-import plotly.express as px
-from postgres.database import ScadaSessionLocal
 from sqlalchemy.orm import Session
+
+from mlflows.loadmodel import load_model
+from postgres.database import ScadaSessionLocal
+from schemas.json_schema import JsonQuery
+from .rmodules import scada_insert, rename_gen, prediction
 
 router = APIRouter(
     prefix='/test',
@@ -22,11 +23,16 @@ def get_scada():
         db.close()
 
 
-@router.post('/json_query/', response_model=JsonQuery)
+@router.post('/json_query/')
 async def json_tester(generator: str, query: JsonQuery):
+    generator = rename_gen(generator)
     data = jsonable_encoder(query)
-    print(pd.DataFrame(data))
-    return data
+    dataframe = pd.DataFrame(data)
+    model = load_model(generator)
+    predict = prediction(model, dataframe)
+    print(predict)
+
+    return predict
 
 
 @router.get('/plot_test')
@@ -36,7 +42,7 @@ async def plot_test(data):
 
 
 @router.post('/json_query_insert_db_test')
-async def json_query_insert_db(generator: str, query: JsonQuery, db: Session=Depends(get_scada)):
+async def json_query_insert_db(generator: str, query: JsonQuery, db: Session = Depends(get_scada)):
     generator = rename_gen(generator)
 
     data = jsonable_encoder(query)

@@ -1,7 +1,8 @@
-from neuralprophet import NeuralProphet
-from hyperopt import hp, STATUS_OK, tpe, fmin, Trials
 from functools import partial
+
 import numpy as np
+from hyperopt import hp, STATUS_OK, tpe, fmin, Trials
+from neuralprophet import NeuralProphet
 
 
 def hyperopt_fn(params, train_data, validation_data, col_name, n_forecasts=24, n_lags=24):

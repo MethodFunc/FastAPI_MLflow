@@ -1,7 +1,7 @@
-import numpy as np
+from copy import deepcopy
+
 import pandas as pd
 from pyarrow import csv
-from copy import deepcopy
 
 
 def load_dataframe(path, col_name):

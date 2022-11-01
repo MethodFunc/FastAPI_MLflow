@@ -35,5 +35,3 @@ def model_register(model_name, artifact_uri, run_id):
         version=current_version,
         stage='Production'
     )
-
-

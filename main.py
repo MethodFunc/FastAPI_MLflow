@@ -1,27 +1,24 @@
 import json
 
-import plotly.utils
-import sqlalchemy.exc
-import uvicorn
-
-import requests
 import pandas as pd
 import plotly.express as px
-
+import plotly.utils
+import requests
+import sqlalchemy.exc
+import uvicorn
 from fastapi import FastAPI, Depends, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
-
-from postgres.database import DataSessionLocal
-from routers import tester, forecasts
-from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
 
 from postgres.crud import get_data, get_data2
-from sqlalchemy.orm import Session
+from postgres.database import DataSessionLocal
+from routers import tester, forecasts
 
 
 def get_db():
-    db = DataSessionLocal()
+    db = ...
     try:
         yield db
     finally:
@@ -55,6 +52,7 @@ def server_status(url):
         code = 'Unable to connect to server'
 
     return code
+
 
 @app.get('/', response_class=HTMLResponse)
 async def index(request: Request):

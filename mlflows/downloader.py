@@ -1,10 +1,11 @@
 import os
 from pathlib import Path
+
 from mlflow.tracking import MlflowClient
 
 MODEL_PATH = 'mlflow_model'
 
-#Tracking Database 와 ArtifactURI입력
+# Tracking Database 와 ArtifactURI입력
 # ArtifactURI = sftp 서버
 os.environ['MLFLOW_TRACKING_URI'] = 'postgresql+psycopg2://dev:dev1234@localhost:5432/mlflow_test'
 os.environ['MLFLOW_ARTIFACT_URI'] = 'sftp://dev:dev1234@localhost:14022/mlflow/'
