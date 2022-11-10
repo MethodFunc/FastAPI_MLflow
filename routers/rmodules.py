@@ -58,7 +58,10 @@ def prediction(model, dataframe) -> list:
 def scada_insert(dataframe, gen_name, db: Session):
     print('Scada insert start')
     for _, values in dataframe.iterrows():
-        date = datetime.strptime(values['ds'], '%Y.%m.%d %H:%M')
+        try:
+            date = datetime.strptime(values['ds'], '%Y.%m.%d %H:%M:%S')
+        except ValueError:
+            date = datetime.strptime(values['ds'], '%Y-%m-%d %H:%M:%S')
         item = Scada(record_date=date, wind_speed=values['WS'], wind_direction=values['WD'],
                      active_power=values['y'])
         insert_item(db, gen_name, schema=item)
@@ -67,7 +70,10 @@ def scada_insert(dataframe, gen_name, db: Session):
 def scada_update(dataframe, gen_name, db: Session):
     print('Scada Update start')
     for _, values in dataframe.iterrows():
-        date = datetime.strptime(values['ds'], '%Y.%m.%d %H:%M')
+        try:
+            date = datetime.strptime(values['ds'], '%Y.%m.%d %H:%M:%S')
+        except ValueError:
+            date = datetime.strptime(values['ds'], '%Y-%m-%d %H:%M:%S')
         item = Scada(record_date=date, wind_speed=values['WS'], wind_direction=values['WD'],
                      active_power=values['y'])
         update_item(db, gen_name, schema=item)
