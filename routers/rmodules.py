@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 from postgres.crud import insert_item, insert_forecast, update_item, update_forecast
 from postgres.schemas import Scada, Forecast
 
+DATEFORMAT = '%Y-%m-%d %H:%M:%S'
+
 
 def prediction(model, dataframe) -> list:
     dataframe.dropna(inplace=True)
@@ -44,7 +46,7 @@ def prediction(model, dataframe) -> list:
     output = list()
     timezone = pytz.timezone('asia/seoul')
     for indices, values in zip(indices, predict):
-        dt = datetime.strptime(str(indices), '%Y-%m-%d %H:%M:%S')
+        dt = datetime.strptime(str(indices), )
         local_dt = timezone.localize(dt, is_dst=None)
         utc_dt = local_dt.astimezone(pytz.utc)
 
@@ -61,7 +63,7 @@ def scada_insert(dataframe, gen_name, db: Session):
         try:
             date = datetime.strptime(values['ds'], '%Y.%m.%d %H:%M:%S')
         except ValueError:
-            date = datetime.strptime(values['ds'], '%Y-%m-%d %H:%M:%S')
+            date = datetime.strptime(values['ds'], DATEFORMAT)
         item = Scada(record_date=date, wind_speed=values['WS'], wind_direction=values['WD'],
                      active_power=values['y'])
         insert_item(db, gen_name, schema=item)
@@ -73,7 +75,7 @@ def scada_update(dataframe, gen_name, db: Session):
         try:
             date = datetime.strptime(values['ds'], '%Y.%m.%d %H:%M:%S')
         except ValueError:
-            date = datetime.strptime(values['ds'], '%Y-%m-%d %H:%M:%S')
+            date = datetime.strptime(values['ds'], DATEFORMAT)
         item = Scada(record_date=date, wind_speed=values['WS'], wind_direction=values['WD'],
                      active_power=values['y'])
         update_item(db, gen_name, schema=item)
